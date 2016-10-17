@@ -1,77 +1,64 @@
-garden = (
-[[5, 7, 8, 6, 3],
- [0, 0, 7, 0, 4],
- [4, 6, 3, 4, 9],
- [3, 1, 0, 5, 8]]
-)
-
 def eat(garden):
+    """Returns the total number of carrots eaten by Mr. Bunny
 
+        >>> garden1 = [[5, 7, 8, 6, 3], [0, 0, 7, 0, 4], [4, 6, 3, 4, 9], [3, 1, 0, 5, 8]]
+        >>> garden2 = [[5, 7, 8, 6, 3], [0, 0, 7, 0, 4], [4, 6, 3, 4, 9]]
+        >>> garden3 = [[7, 0, 6, 3], [0, 2, 0, 4], [6, 3, 4, 9], [1, 1, 5, 0]]
+        >>> eat(garden1)
+        27
+        >>> eat(garden2)
+        27
+        >>> eat(garden3)
+        26
+
+    """
     # Find the dimensions of the garden
     N = len(garden)  # rows
     M = len(garden[0])  # cols
-    
-    # Find the starting indecies
-    if (N % 2) == 0 and (M % 2) == 0:
-        most = 0
-        for x in xrange(N/2 - 1, N/2 + 1):
-            for y in xrange(M/2 - 1, M/2 + 1):
-                if garden[x][y] > count:
-                    start_row, start_col = x, y
-                    most = garden[x][y]
 
-    elif (N % 2) != 0 and (M % 2) == 0:
-        start_row, start_col = N/2, M/2 - 1
-        count = garden[start_row][start_col]
-        if garden[start_row][start_col + 1] > count:
-            start_col = start_col + 1
-            count = garden[start_row][start_col]
+    # Find starting indecies, carrot count
+    possible_start_cells = [(N/2, M/2),
+                            ((N-1)/2, M/2),
+                            (N/2, (M-1)/2),
+                            ((N-1)/2, (M-1)/2)]
 
-    elif (N % 2) == 0 and (M % 2) != 0:
-        start_row, start_col = N/2 - 1, M/2
-        count = garden[start_row][start_col]
-        if garden[start_row + 1][start_col] > count:
-            start_row = start_row + 1
-            count = garden[start_row][start_col]
-
-    elif (N % 2) != 0 and (M % 2) != 0:
-        start_row, start_col = N/2, M/2
-        count = garden[start_row][start_col]
+    count, curr_row, curr_col = find_max_carrot_count(garden, possible_start_cells)
 
     # Look all directions, move, eat, update
     while True:
-        amount = 0
+        options_to_look = [(curr_row - 1, curr_col),
+                           (curr_row, curr_col - 1),
+                           (curr_row + 1, curr_col),
+                           (curr_row, curr_col + 1)]
 
-        # Look up
-        if start_row > 0 and garden[start_row - 1][start_col] > amount:
-            amount = garden[start_row - 1][start_col]
-            new_row, new_col = start_row - 1, start_col
+        amount, new_row, new_col = find_max_carrot_count(garden, options_to_look)
 
-        # Look down
-        if start_row < N - 1 and garden[start_row + 1][start_col] > amount:
-            amount = garden[start_row + 1][start_col]
-            new_row, new_col = start_row + 1, start_col
-
-        # Look right
-        if start_col < M - 1 and garden[start_row][start_col + 1] > amount:
-            amount = garden[start_row][start_col + 1]
-            new_row, new_col = start_row, start_col + 1
-
-        # Look left
-        if start_col > 0 and garden[start_row][start_col - 1] > amount:
-            amount = garden[start_row][start_col - 1]
-            new_row, new_col = start_row, start_col - 1
-
-        # No more carrots to eat... 
+        # No more carrots to eat
         if amount == 0:
             return count
 
-        # update position, total
+        # eat current carrots, update position, total count
         else:
-            garden[start_row][start_col] = 0
-            start_row, start_col = new_row, new_col
+            garden[curr_row][curr_col] = 0
+            curr_row, curr_col = new_row, new_col
             count += amount
 
 
+def find_max_carrot_count(garden, idx_list):
+    """finds the cell in garden with max num carrots from idx_list"""
+    count = 0
+    row, col = idx_list[0]
+    for x, y in idx_list:
+        if x < 0 or x >= len(garden) or y < 0 or y >= len(garden[0]):
+            continue
+        elif garden[x][y] > count:
+            count, row, col = garden[x][y], x, y
 
-print eat(garden)
+    return count, row, col
+
+
+if __name__ == '__main__':
+    import doctest
+    if doctest.testmod().failed == 0:
+        print "\n ALL TESTS PASSED!! \n"
+
