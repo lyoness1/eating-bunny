@@ -1,3 +1,6 @@
+# This solution works, but is repetitive, difficult to read, etc. 
+# This solution would be a "maybe" to a "probably" candidate
+
 garden = (
 [[5, 7, 8, 6, 3],
  [0, 0, 7, 0, 4],

@@ -1,3 +1,12 @@
+# This is a very elegent solution
+# - well named
+# - has comments
+# - has tests
+# - avoids repetition by using extraction and abstraction
+# - is a working solution
+
+# This is a "yes" candidate
+
 def eat(garden):
     """Returns the total number of carrots eaten by Mr. Bunny
 
